@@ -28,15 +28,12 @@ db.sqlite3-journal
 /media
 /staticfiles
 /static
-*.pyc
-__pycache__/
 
 # Virtual environments
 venv/
 ENV/
 env/
 .venv
-.env/
 
 # IDE
 .vscode/
@@ -46,6 +43,8 @@ env/
 *~
 *.sublime-project
 *.sublime-workspace
+*.iml
+out/
 
 # OS
 .DS_Store
@@ -68,44 +67,17 @@ ehthumbs.db
 htmlcov/
 .tox/
 
-# IDEs
-*.iml
-*.sublime-project
-*.sublime-workspace
-
-# IDE - VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# IDE - PyCharm
-.idea/
-*.iml
-out/
-
-# Misc
-.DS_Store
-.cache
-.claude/
-.pytest_cache/
-
 # Documentation
 *.md
 
 # Claude
 .claude/
 
-# Node modules (if using npm)
+# Node modules
 node_modules/
 npm-debug.log
 
-# Migrations (optional - keep if you want to version control migrations)
-# migrations/
-
 # Compiled files
-*.so
 *.pyc
 *.pyo
 *.pyd
@@ -113,7 +85,6 @@ npm-debug.log
 # Distribution
 dist/
 build/
-*.egg-info/
 
 # Local test database
 *.db
