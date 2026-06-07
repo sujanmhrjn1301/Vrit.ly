@@ -1,0 +1,305 @@
+{% extends "shortener/base.html" %}
+
+{% block title %}Vrit.ly - Smart Link Shortener{% endblock %}
+
+{% block content %}
+<style>
+    .landing-container {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        background: white;
+        overflow: hidden;
+    }
+
+    .landing-left {
+        color: var(--secondary-color);
+        padding: 0.8rem;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .landing-left h1 {
+        font-size: 3.2rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+        letter-spacing: -1px;
+        color: var(--secondary-color);
+    }
+
+    .landing-left p {
+        font-size: 1rem;
+        line-height: 1.6;
+        opacity: 0.8;
+        margin-bottom: 1.2rem;
+        max-width: 500px;
+        color: #4a5568;
+    }
+
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin: 0.8rem 0 0 0;
+    }
+
+    .features-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 0.7rem;
+        font-size: 0.95rem;
+        color: var(--secondary-color);
+    }
+
+    .features-list .icon {
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        flex-shrink: 0;
+        font-size: 0.85rem;
+        font-weight: bold;
+    }
+
+    .landing-right {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .shorten-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.8rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .shorten-card h3 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+        color: var(--secondary-color);
+    }
+
+    .shorten-card .subtitle {
+        color: #999;
+        font-size: 0.9rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .form-control {
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.7rem 0.9rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        outline: none;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 0.85rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 0.3rem;
+    }
+
+    .submit-btn:hover {
+        background: #e55a2b;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 107, 53, 0.3);
+    }
+
+    .error-text {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+
+    @media (max-width: 992px) {
+        .landing-container {
+            flex-direction: column;
+            text-align: center;
+            height: 100vh;
+            padding: 0.8rem;
+        }
+
+        .landing-left {
+            padding: 0.6rem;
+            justify-content: flex-start;
+        }
+
+        .landing-left h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .landing-left p {
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 0.75rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .features-list li {
+            justify-content: center;
+            font-size: 0.65rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .landing-right {
+            padding: 0.6rem;
+        }
+
+        .shorten-card {
+            max-width: 100%;
+            padding: 1rem;
+        }
+
+        .shorten-card h3 {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<div class="landing-container">
+    <div class="row w-100" style="align-items: center;">
+        <!-- Left Side -->
+        <div class="col-lg-6 landing-left">
+            <h1>Shorten Your URLs</h1>
+            <p>Turn those long, unwieldy links into short, shareable ones. Track their performance. Customize them. All without the hassle.</p>
+
+            <ul class="features-list">
+                <li>
+                    <span class="icon">✓</span>
+                    <span>Instant link shortening - no signup needed</span>
+                </li>
+                <li>
+                    <span class="icon">✓</span>
+                    <span>Generate QR codes for easy sharing</span>
+                </li>
+                <li>
+                    <span class="icon">✓</span>
+                    <span>Track clicks and engagement</span>
+                </li>
+                <li>
+                    <span class="icon">✓</span>
+                    <span>Customize your short links</span>
+                </li>
+                <li>
+                    <span class="icon">✓</span>
+                    <span>Set expiration dates for control</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Right Side -->
+        <div class="col-lg-6 landing-right">
+            {% if short_url %}
+            <div class="shorten-card">
+                <h3>✓ Link Shortened!</h3>
+                <p class="subtitle">Your short URL is ready to share.</p>
+
+                <div class="form-group" style="margin-bottom: 0.8rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--secondary-color); margin-bottom: 0.4rem; display: block;">Your short link</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <input type="text" class="form-control" value="http://localhost:8000/s/{{ short_url.get_short_code }}/" readonly id="short-url-input" style="flex: 1;">
+                        <button type="button" class="submit-btn" onclick="copyToClipboard()" style="width: auto; padding: 0.7rem 1.2rem; margin-top: 0;">Copy</button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0.8rem;">
+                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--secondary-color); margin-bottom: 0.4rem; display: block;">Original link</label>
+                    <input type="text" class="form-control" value="{{ short_url.original_url }}" readonly style="font-size: 0.9rem;">
+                </div>
+
+                <a href="{% url 'landing' %}" class="submit-btn" style="text-align: center; text-decoration: none; display: block;">Shorten Another Link</a>
+            </div>
+            {% else %}
+            <div class="shorten-card">
+                <h3>Shorten a Link</h3>
+                <p class="subtitle">Free. No credit card needed.</p>
+
+                <form method="post" action="{% url 'landing' %}" id="shorten-form">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="{{ form.original_url.id_for_label }}">Paste your long link</label>
+                        {{ form.original_url }}
+                        {% if form.original_url.errors %}
+                            <div class="error-text">
+                                {% for error in form.original_url.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.expiration_date.id_for_label }}">Expiration date <span style="opacity: 0.6;">optional</span></label>
+                        {{ form.expiration_date }}
+                        {% if form.expiration_date.errors %}
+                            <div class="error-text">
+                                {% for error in form.expiration_date.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        Get your link for free
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard() {
+    const input = document.getElementById('short-url-input');
+    navigator.clipboard.writeText(input.value).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = 'var(--primary-color)';
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

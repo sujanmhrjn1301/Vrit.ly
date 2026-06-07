@@ -1,0 +1,75 @@
+{% extends "shortener/base.html" %}
+
+{% block title %}Create Short URL - URL Shortener{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Create Short URL</h2>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label for="{{ form.original_url.id_for_label }}" class="form-label">
+                            Original URL
+                        </label>
+                        {{ form.original_url }}
+                        <small class="form-text text-muted d-block mt-2">
+                            Enter the long URL you want to shorten
+                        </small>
+                        {% if form.original_url.errors %}
+                            <div class="text-danger small mt-2">
+                                {% for error in form.original_url.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.expiration_date.id_for_label }}" class="form-label">
+                            Expiration Date (Optional)
+                        </label>
+                        {{ form.expiration_date }}
+                        <small class="form-text text-muted d-block mt-2">
+                            {{ form.expiration_date.help_text }}
+                        </small>
+                        {% if form.expiration_date.errors %}
+                            <div class="text-danger small mt-2">
+                                {% for error in form.expiration_date.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-link"></i> Create Short URL
+                        </button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3"><i class="fas fa-info-circle text-primary"></i> How it works</h5>
+                <ul>
+                    <li>Enter your long URL above</li>
+                    <li>Optionally set an expiration date</li>
+                    <li>Click "Create Short URL"</li>
+                    <li>Your short URL will be generated and ready to share</li>
+                    <li>You can customize the short code after creation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    form input, form select {
+        width: 100%;
+    }
+</style>
+{% endblock %}

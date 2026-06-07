@@ -1,0 +1,36 @@
+{% extends "shortener/base.html" %}
+
+{% block title %}Edit URL - URL Shortener{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Edit Short URL</h2>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label"><strong>Short Code</strong></label>
+                        <input type="text" class="form-control" value="{{ short_url.get_short_code }}" readonly>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="original_url" class="form-label"><strong>Original URL</strong></label>
+                        <input type="url" id="original_url" name="original_url" class="form-control" value="{{ short_url.original_url }}" required>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <a href="{% url 'url_detail' short_url.pk %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

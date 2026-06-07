@@ -1,0 +1,102 @@
+{% extends "shortener/base.html" %}
+
+{% block title %}Your Short URL - URL Shortener{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body p-5">
+                <h2 class="card-title mb-4">✅ Your link is ready!</h2>
+
+                <div class="mb-4">
+                    <label class="form-label"><strong>Short URL</strong></label>
+                    <div class="input-group">
+                        <input type="text" class="form-control form-control-lg" value="{{ short_url_full }}" id="short-url" readonly>
+                        <button class="btn btn-primary" type="button" onclick="copyToClipboard()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label"><strong>Original URL</strong></label>
+                    <input type="text" class="form-control" value="{{ short_url.original_url }}" readonly>
+                </div>
+
+                {% if is_owner and form %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Want to customize your link? <a href="{% url 'login' %}">Log in</a> to get more options!
+                    </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <a href="{{ short_url_full }}" target="_blank" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-external-link-alt"></i> Test Link
+                        </a>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <a href="{% url 'landing' %}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-plus"></i> Shorten Another
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if qr_code %}
+            <div class="card mt-4">
+                <div class="card-body p-5 text-center">
+                    <h5 class="card-title mb-3">QR Code</h5>
+                    <div class="qr-code-container">
+                        <img src="{{ qr_code }}" alt="QR Code" id="qr-code-image">
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary mt-3" onclick="downloadQRCode('{{ short_url.get_short_code }}')">
+                        <i class="fas fa-download"></i> Download QR Code
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if not user.is_authenticated %}
+            <div class="card mt-4 bg-light">
+                <div class="card-body p-5">
+                    <h5 class="card-title mb-3">Want to manage your links?</h5>
+                    <p class="mb-3">Create an account to customize your links, track analytics, set expiration dates, and more!</p>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'register' %}" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-sign-in-alt"></i> Log In
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function copyToClipboard() {
+    const urlInput = document.getElementById('short-url');
+    navigator.clipboard.writeText(urlInput.value).then(() => {
+        const btn = event.target.closest('button');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+        }, 2000);
+    });
+}
+
+function downloadQRCode(shortCode) {
+    const image = document.getElementById('qr-code-image');
+    const link = document.createElement('a');
+    link.href = image.src;
+    link.download = `qr-${shortCode}.png`;
+    link.click();
+}
+</script>
+{% endblock %}
