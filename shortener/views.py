@@ -21,6 +21,7 @@ def landing_page(request):
         return redirect('dashboard')
 
     short_url = None
+    short_url_full = None
     if request.method == 'POST':
         form = ShortenURLForm(request.POST)
         if form.is_valid():
@@ -40,12 +41,14 @@ def landing_page(request):
                 short_key=short_key,
                 expires_at=expires_at
             )
+            short_url_full = request.build_absolute_uri(f'/s/{short_url.get_short_code()}/')
     else:
         form = ShortenURLForm()
 
     context = {
         'form': form,
-        'short_url': short_url
+        'short_url': short_url,
+        'short_url_full': short_url_full
     }
     return render(request, 'shortener/landing.html', context)
 
@@ -129,7 +132,7 @@ def url_detail_public(request, pk):
     if short_url.user and short_url.user != request.user and request.user.is_authenticated:
         return redirect('landing')
 
-    qr_code_url = generate_qr_code(short_url)
+    qr_code_url = generate_qr_code(short_url, request)
     short_url_full = request.build_absolute_uri(f'/s/{short_url.get_short_code()}/')
     form = None
 
@@ -164,7 +167,7 @@ def url_detail(request, pk):
     else:
         form = CustomShortForm(instance=short_url)
 
-    qr_code_url = generate_qr_code(short_url)
+    qr_code_url = generate_qr_code(short_url, request)
     short_url_full = request.build_absolute_uri(f'/s/{short_url.get_short_code()}/')
 
     return render(request, 'shortener/url_detail.html', {
@@ -218,11 +221,15 @@ def redirect_to_url(request, short_code):
 @login_required(login_url='login')
 def get_qr_code(request, pk):
     short_url = get_object_or_404(ShortenedURL, pk=pk, user=request.user)
-    qr_code_url = generate_qr_code(short_url)
+    qr_code_url = generate_qr_code(short_url, request)
     return JsonResponse({'qr_code': qr_code_url})
 
-def generate_qr_code(short_url):
-    short_url_full = f"http://localhost:8000/s/{short_url.get_short_code()}/"
+def generate_qr_code(short_url, request=None):
+    if request:
+        short_url_full = request.build_absolute_uri(f'/s/{short_url.get_short_code()}/')
+    else:
+        short_url_full = f"http://localhost:8000/s/{short_url.get_short_code()}/"
+
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
