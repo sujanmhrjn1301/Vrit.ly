@@ -21,6 +21,7 @@ def landing_page(request):
         return redirect('dashboard')
 
     short_url = None
+    short_url_full = None
     if request.method == 'POST':
         form = ShortenURLForm(request.POST)
         if form.is_valid():
@@ -40,12 +41,14 @@ def landing_page(request):
                 short_key=short_key,
                 expires_at=expires_at
             )
+            short_url_full = request.build_absolute_uri(f'/s/{short_url.get_short_code()}/')
     else:
         form = ShortenURLForm()
 
     context = {
         'form': form,
-        'short_url': short_url
+        'short_url': short_url,
+        'short_url_full': short_url_full
     }
     return render(request, 'shortener/landing.html', context)
 

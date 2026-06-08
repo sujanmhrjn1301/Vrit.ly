@@ -237,7 +237,7 @@
                 <div class="form-group" style="margin-bottom: 0.8rem;">
                     <label style="font-size: 0.85rem; font-weight: 600; color: var(--secondary-color); margin-bottom: 0.4rem; display: block;">Your short link</label>
                     <div style="display: flex; gap: 0.5rem;">
-                        <input type="text" class="form-control" value="http://localhost:8000/s/{{ short_url.get_short_code }}/" readonly id="short-url-input" style="flex: 1;">
+                        <input type="text" class="form-control" value="{{ short_url_full }}" readonly id="short-url-input" style="flex: 1;">
                         <button type="button" class="submit-btn" onclick="copyToClipboard()" style="width: auto; padding: 0.7rem 1.2rem; margin-top: 0;">Copy</button>
                     </div>
                 </div>
