@@ -12,7 +12,7 @@ A modern Django-based URL shortener application similar to TinyURL or Bitly. Cre
 - **Analytics**: Track click counts and access statistics
 - **QR Code Generation**: Generate QR codes for easy sharing (for short URLs, not original URLs)
 - **URL Expiration**: Set expiration dates for temporary shortened URLs
-- **Click Logging**: Record detailed information about clicks (IP address, user agent, timestamp)
+- **Click Logging**: Record information about clicks
 
 ### Technical Highlights
 - Base62 encoding for short URL generation
