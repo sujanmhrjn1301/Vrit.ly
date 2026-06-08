@@ -3,95 +3,250 @@
 {% block title %}Dashboard - URL Shortener{% endblock %}
 
 {% block content %}
-<div class="row mb-4">
-    <div class="col">
-        <h1>My Shortened URLs</h1>
-    </div>
-    <div class="col-auto">
-        <a href="{% url 'create_url' %}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Create New URL
-        </a>
-    </div>
+<style>
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin: 0;
+    }
+
+    .url-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .url-card {
+        background: white;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .url-card:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .url-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        gap: 1rem;
+    }
+
+    .short-code {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.4rem;
+    }
+
+    .short-url-link {
+        font-size: 0.85rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        word-break: break-all;
+    }
+
+    .short-url-link:hover {
+        text-decoration: underline;
+    }
+
+
+    .stats-row {
+        display: flex;
+        gap: 0.8rem;
+        margin: 1rem 0;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: #666;
+        background: #f9f9f9;
+        padding: 0.5rem 0.8rem;
+        border-radius: 6px;
+    }
+
+    .stat-label {
+        color: #999;
+        font-size: 0.75rem;
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: #e8f5e9;
+        color: var(--primary-color);
+    }
+
+    .status-expired {
+        background: #ffe0e0;
+        color: #d32f2f;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1.2rem;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 1rem;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 0.6rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+    }
+
+    .action-view {
+        background: #e3f2fd;
+        color: #1976d2;
+    }
+
+    .action-view:hover {
+        background: #bbdefb;
+    }
+
+    .action-edit {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .action-edit:hover {
+        background: #ffe0b2;
+    }
+
+    .action-delete {
+        background: #ffebee;
+        color: #d32f2f;
+    }
+
+    .action-delete:hover {
+        background: #ffcdd2;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-text {
+        color: #999;
+        font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+        .url-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="dashboard-header">
+    <h1>Vrit.Ly URLs</h1>
+    <a href="{% url 'create_url' %}" class="btn btn-primary" style="display: flex; align-items: center; gap: 0.5rem;">
+        + Create New
+    </a>
 </div>
 
 {% if urls %}
-    <div class="row">
+    <div class="url-grid">
         {% for url in urls %}
-            <div class="col-lg-6 mb-4">
-                <div class="card url-card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div>
-                                <h5 class="card-title mb-1">
-                                    {% if url.custom_key %}
-                                        {{ url.custom_key }}
-                                    {% else %}
-                                        {{ url.short_key }}
-                                    {% endif %}
-                                </h5>
-                                <p class="text-muted small mb-0">
-                                    <i class="fas fa-link"></i>
-                                    <a href="/s/{{ url.get_short_code }}/" target="_blank">
-                                        /s/{{ url.get_short_code }}/
-                                    </a>
-                                </p>
-                            </div>
-                            {% if url.is_expired %}
-                                <span class="badge expiry-badge">Expired</span>
+            <div class="url-card">
+                <div class="url-card-header">
+                    <div style="flex: 1;">
+                        <div class="short-code">
+                            {% if url.custom_key %}
+                                {{ url.custom_key }}
                             {% else %}
-                                <span class="badge active-badge">Active</span>
+                                {{ url.short_key }}
                             {% endif %}
                         </div>
-
-                        <p class="card-text text-muted mb-2">
-                            <small><strong>Original:</strong></small><br>
-                            <small class="text-truncate d-block" title="{{ url.original_url }}">
-                                {{ url.original_url }}
-                            </small>
-                        </p>
-
-                        <div class="mb-3">
-                            <div class="btn-group-custom">
-                                <span class="badge-stats">
-                                    <i class="fas fa-mouse"></i> {{ url.click_count }} clicks
-                                </span>
-                                <span class="badge-stats">
-                                    <i class="fas fa-calendar"></i>
-                                    {{ url.created_at|date:"M d, Y" }}
-                                </span>
-                                {% if url.expires_at %}
-                                    <span class="badge-stats">
-                                        <i class="fas fa-hourglass-end"></i>
-                                        Expires: {{ url.expires_at|date:"M d, Y" }}
-                                    </span>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="btn-group-custom">
-                            <a href="{% url 'url_detail' url.pk %}" class="btn btn-sm btn-info">
-                                <i class="fas fa-eye"></i> View
-                            </a>
-                            <a href="{% url 'edit_url' url.pk %}" class="btn btn-sm btn-warning">
-                                <i class="fas fa-edit"></i> Edit
-                            </a>
-                            <a href="{% url 'delete_url' url.pk %}" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash"></i> Delete
-                            </a>
-                        </div>
                     </div>
+                    <span class="status-badge {% if url.is_expired %}status-expired{% else %}status-active{% endif %}">
+                        {% if url.is_expired %}Expired{% else %}Active{% endif %}
+                    </span>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <span class="stat-label">Clicks:</span>
+                        <span style="font-weight: 600; color: #333;">{{ url.click_count }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Created:</span>
+                        <span style="font-weight: 500;">{{ url.created_at|date:"M d, Y" }}</span>
+                    </div>
+                    {% if url.expires_at %}
+                        <div class="stat-item">
+                            <span class="stat-label">Expires:</span>
+                            <span style="font-weight: 500;">{{ url.expires_at|date:"M d, Y" }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-actions">
+                    <a href="{% url 'url_detail' url.pk %}" class="action-btn action-view">View</a>
+                    <a href="{% url 'edit_url' url.pk %}" class="action-btn action-edit">Edit</a>
+                    <a href="{% url 'delete_url' url.pk %}" class="action-btn action-delete">Delete</a>
                 </div>
             </div>
         {% endfor %}
     </div>
 {% else %}
-    <div class="card text-center">
-        <div class="card-body py-5">
-            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-            <h5>No shortened URLs yet</h5>
-            <p class="text-muted">Create your first shortened URL to get started.</p>
-            <a href="{% url 'create_url' %}" class="btn btn-primary">Create URL</a>
-        </div>
+    <div style="text-align: center; padding: 3rem; background: #f9f9f9; border-radius: 12px;">
+        <div style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;">—</div>
+        <h5 style="color: var(--secondary-color); margin-bottom: 0.5rem;">No shortened URLs yet</h5>
+        <p style="color: #999; margin-bottom: 1.5rem;">Create your first shortened URL to get started.</p>
+        <a href="{% url 'create_url' %}" class="btn btn-primary">+ Create URL</a>
     </div>
 {% endif %}
 {% endblock %}

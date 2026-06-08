@@ -3,136 +3,395 @@
 {% block title %}URL Details - URL Shortener{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-4">
-                    <div>
-                        <h2 class="card-title">URL Details</h2>
-                        {% if short_url.is_expired %}
-                            <span class="badge bg-danger">Expired</span>
-                        {% else %}
-                            <span class="badge bg-success">Active</span>
-                        {% endif %}
-                    </div>
-                    <div class="btn-group">
-                        <a href="{% url 'edit_url' short_url.pk %}" class="btn btn-warning btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </a>
-                        <a href="{% url 'delete_url' short_url.pk %}" class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i> Delete
-                        </a>
+<style>
+    .detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .header-section h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin: 0;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        padding: 0.6rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-edit {
+        background: #fff3e0;
+        color: #f57c00;
+    }
+
+    .btn-edit:hover {
+        background: #ffe0b2;
+    }
+
+    .btn-delete {
+        background: #ffebee;
+        color: #d32f2f;
+    }
+
+    .btn-delete:hover {
+        background: #ffcdd2;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .status-active {
+        background: #e8f5e9;
+        color: var(--primary-color);
+    }
+
+    .status-expired {
+        background: #ffe0e0;
+        color: #d32f2f;
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .info-section {
+        background: white;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    .info-row {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        color: var(--secondary-color);
+        word-break: break-all;
+    }
+
+    .url-input-group {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .url-input {
+        flex: 1;
+        padding: 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-family: monospace;
+    }
+
+    .copy-btn {
+        padding: 0.75rem 1.2rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+        background: #e55a2b;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .stat-box {
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: #999;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .expiry-info {
+        background: #e3f2fd;
+        border-left: 4px solid #1976d2;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        color: #0d47a1;
+    }
+
+    .qr-section {
+        text-align: center;
+    }
+
+    .qr-image {
+        max-width: 200px;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .customize-section {
+        background: white;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .customize-header {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 0.95rem;
+    }
+
+    .form-hint {
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: 0.4rem;
+    }
+
+    .submit-btn {
+        padding: 0.75rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .submit-btn:hover {
+        background: #e55a2b;
+    }
+
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--secondary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+        background: #000d33;
+    }
+
+    .download-btn {
+        padding: 0.6rem 1rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .download-btn:hover {
+        background: #e55a2b;
+    }
+
+    @media (max-width: 768px) {
+        .content-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .header-section {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .header-section h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="detail-container">
+    <div class="header-section">
+        <h1>URL Details</h1>
+        <div class="header-actions">
+            <a href="{% url 'edit_url' short_url.pk %}" class="action-btn btn-edit">Edit</a>
+            <a href="{% url 'delete_url' short_url.pk %}" class="action-btn btn-delete">Delete</a>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div>
+            <div class="info-section">
+                <div class="info-row">
+                    <div class="info-label">Status</div>
+                    <span class="status-badge {% if short_url.is_expired %}status-expired{% else %}status-active{% endif %}">
+                        {% if short_url.is_expired %}Expired{% else %}Active{% endif %}
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-label">Short URL</div>
+                    <div class="url-input-group">
+                        <input type="text" class="url-input" value="{{ short_url_full }}" readonly id="short-url-copy">
+                        <button type="button" class="copy-btn" onclick="copyToClipboard()">Copy</button>
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label"><strong>Short URL</strong></label>
-                    <div class="input-group">
-                        <input type="text" class="form-control" value="{{ short_url_full }}" readonly>
-                        <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('{{ short_url_full }}')">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
+                <div class="info-row">
+                    <div class="info-label">Original URL</div>
+                    <div class="info-value">{{ short_url.original_url }}</div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label"><strong>Original URL</strong></label>
-                    <input type="text" class="form-control" value="{{ short_url.original_url }}" readonly>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label"><strong>Created On</strong></label>
-                        <p>{{ short_url.created_at|date:"M d, Y g:i A" }}</p>
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Created</div>
+                        <div class="stat-value" style="font-size: 1rem; font-weight: 500;">{{ short_url.created_at|date:"M d, Y" }}</div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label"><strong>Total Clicks</strong></label>
-                        <p class="h4 text-primary">{{ short_url.click_count }}</p>
+                    <div class="stat-box">
+                        <div class="stat-label">Clicks</div>
+                        <div class="stat-value">{{ short_url.click_count }}</div>
                     </div>
                 </div>
 
                 {% if short_url.expires_at %}
-                    <div class="alert alert-info">
-                        <i class="fas fa-hourglass-end"></i>
-                        This URL expires on {{ short_url.expires_at|date:"M d, Y g:i A" }}
+                    <div class="expiry-info">
+                        Expires on {{ short_url.expires_at|date:"M d, Y" }}
                     </div>
                 {% endif %}
+            </div>
 
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">Customize Short Code</h5>
-                    </div>
-                    <div class="card-body">
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="mb-3">
-                                <label for="{{ form.custom_key.id_for_label }}" class="form-label">
-                                    Custom Short Code
-                                </label>
-                                {{ form.custom_key }}
-                                <small class="form-text text-muted d-block mt-2">
-                                    Leave blank to keep auto-generated code
-                                </small>
-                                {% if form.custom_key.errors %}
-                                    <div class="text-danger small mt-2">
-                                        {% for error in form.custom_key.errors %}{{ error }}{% endfor %}
-                                    </div>
-                                {% endif %}
+            <div class="customize-section">
+                <div class="customize-header">Customize Short Code</div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="{{ form.custom_key.id_for_label }}" class="form-label">Custom Code</label>
+                        {{ form.custom_key }}
+                        <div class="form-hint">Leave blank to keep auto-generated code</div>
+                        {% if form.custom_key.errors %}
+                            <div style="color: #d32f2f; font-size: 0.85rem; margin-top: 0.5rem;">
+                                {% for error in form.custom_key.errors %}{{ error }}{% endfor %}
                             </div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save Custom Code
-                            </button>
-                        </form>
+                        {% endif %}
                     </div>
-                </div>
+                    <button type="submit" class="submit-btn">Save Custom Code</button>
+                </form>
             </div>
+
+            <a href="{% url 'dashboard' %}" class="back-btn" style="margin-top: 1.5rem;">← Back to Dashboard</a>
         </div>
 
-        <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
-    </div>
-
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0">QR Code</h5>
-            </div>
-            <div class="card-body text-center">
+        <div>
+            <div class="info-section qr-section">
+                <div style="font-size: 1rem; font-weight: 600; color: var(--secondary-color); margin-bottom: 1.5rem;">QR Code</div>
                 {% if qr_code %}
-                    <div class="qr-code-container">
-                        <img src="{{ qr_code }}" alt="QR Code" id="qr-code-image">
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="downloadQRCode('{{ short_url.get_short_code }}')">
-                        <i class="fas fa-download"></i> Download QR Code
-                    </button>
+                    <img src="{{ qr_code }}" alt="QR Code" id="qr-code-image" class="qr-image">
+                    <button type="button" class="download-btn" onclick="downloadQRCode('{{ short_url.get_short_code }}')">Download</button>
                 {% else %}
-                    <p class="text-muted">QR code not available</p>
+                    <p style="color: #999;">QR code not available</p>
                 {% endif %}
-            </div>
-        </div>
-
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="mb-0">Analytics</h5>
-            </div>
-            <div class="card-body">
-                <div class="text-center">
-                    <div class="mb-3">
-                        <h6 class="text-muted">Total Clicks</h6>
-                        <h2 class="text-primary">{{ short_url.click_count }}</h2>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        alert('Copied to clipboard!');
+function copyToClipboard() {
+    const input = document.getElementById('short-url-copy');
+    navigator.clipboard.writeText(input.value).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = 'var(--primary-color)';
+        }, 2000);
     });
 }
 
@@ -144,10 +403,4 @@ function downloadQRCode(shortCode) {
     link.click();
 }
 </script>
-
-<style>
-    form input {
-        width: 100%;
-    }
-</style>
 {% endblock %}
